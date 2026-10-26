@@ -1,0 +1,5 @@
+# dsh-zvec-memory-search cordis patch：纯 insert（id + name），无 config 行，支持热挂载。
+# id 必须等于 host 入口 export const name（src/host/index.ts）。
+- insert:
+    - id: dsh-zvec-memory-search
+      name: dsh-zvec-memory-search

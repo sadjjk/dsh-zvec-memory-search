@@ -1,0 +1,7 @@
+{
+  "id": "dsh-zvec-memory-search",
+  "name": "Zvec Memory Search",
+  "description": "记忆库混合检索（zvec-grep）：zvec-memory-search 工具、配置卡冷启动、检索引导注入",
+  "version": "0.2.0",
+  "author": "claw"
+}

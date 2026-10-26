@@ -1,0 +1,66 @@
+{
+  "name": "dsh-zvec-memory-search",
+  "version": "0.2.0",
+  "description": "DSH 记忆库混合检索：zvec-memory-search 工具、配置卡冷启动、检索引导与用户补充文件注入",
+  "type": "module",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "locale/*.json",
+    "lib/client.js",
+    "lib/index.js",
+    "cordis.patch.yml",
+    "dsh.plugin.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"test/*.test.ts\"",
+    "assemble": "node scripts/assemble.mjs",
+    "release": "pnpm build && pnpm assemble",
+    "publish": "node scripts/publish.mjs",
+    "register": "bash scripts/register.sh"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-client-ui-settings": ">=0.1.5-rc.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@deepseek-ai/schemastery": "^3.18.4",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.0",
+    "react": "^18.3.1",
+    "tsdown": "^0.12.0",
+    "typescript": "^5.9.0"
+  }
+}
