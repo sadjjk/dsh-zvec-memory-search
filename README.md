@@ -1,54 +1,43 @@
 # dsh-zvec-memory-search
 
-DSH 记忆库混合检索（zvec-grep）：`zvec-memory-search` 工具、配置卡冷启动、检索引导与用户补充文件注入。
+给 DeepSeek Harness（DSH）接上本地记忆库检索：用 [zvec-grep](https://zvec.org/zh/docs/zvec-grep/) 为一个 Markdown 记忆目录建立关键词 + 语义混合索引，Agent 回忆过往项目、决策、偏好或某天做了什么时，先检索再回答。
+
+## 它做什么
+
+| 层 | 能力 |
+|---|---|
+| 工具 | `zvec-memory-search`：自然语言检索记忆库，可按文件名日期或修改时间过滤，返回命中段落位置 |
+| 引导 | 每个会话自动提示 Agent 何时、如何调用检索；可另指定一个补充提示词文件（如个人风格）一并注入 |
+| 配置卡 | 安装 zg、建立 / 更新索引、启停自动更新、编辑排除规则、直接试检索 |
+
+检索和向量化全部在本机完成，只使用本地模型。
 
 ## 安装
 
-```bash
-# 开发态（本地仓库）
-pnpm build && bash scripts/register.sh desktop dev
+DSH 桌面版：插件管理 → 添加插件 → 输入仓库地址 `https://github.com/sadjjk/dsh-zvec-memory-search` → 确认。
 
-# 发布态（github）
-pnpm release && pnpm publish
-```
+## 使用
 
-## 配置卡
+1. 打开插件管理页里本插件的配置卡。
+2. 未检测到 zg 时点「安装 zg」。
+3. 填写「记忆库根目录」（Markdown 记忆所在的文件夹）。
+4. 点「建立索引」。首次会下载本地向量模型（约 600MB），之后只做增量更新。
+5. 可选：点「启动 server」，记忆库有改动时自动增量更新索引。
+6. 在「检索测试」里输入一个问题，确认能搜到；之后新会话里 Agent 会自动使用。
 
-插件管理页 `dsh-zvec-memory-search` bundle 行下：
+## 设置
 
-| 状态 | 显示 | 操作 |
-|------|------|------|
-| ① 未装 zg | 未检测到 zg | 「安装 zg」：确认后 `npm install -g @zvec/zvec-grep` |
-| ② 未填根目录 | `memoryRoot` 文本框 | 手填绝对路径 |
-| ③ 未建索引 | 未建索引 | 「建立索引」：写 `.zgignore`（默认排除规则）后 `zg index --ignore-file` |
-| ④ 就绪 | 文件数/实体数/模型/server 状态 | 「增量更新」「重建」「启动/停止 server」「追加排除」 |
+| 设置 | 说明 |
+|---|---|
+| 记忆库根目录 | 检索与建索引的根目录 |
+| 补充提示词文件 | 可选，每个会话注入的个人指令文件；超过 64KB 只注入前 64KB |
+| 注入检索引导 / 注入补充提示词文件 | 两个开关，分别控制两段注入 |
+| 检索方式 | 混合（默认）/ 关键词 / 语义 |
+| 默认条数 | 每次检索默认返回条数 |
+| 摘要详略 | 命中段落摘要长度 |
 
-## 工具
+排除规则保存在记忆库根目录的 `.zgignore`，可在配置卡里直接编辑。
 
-`zvec-memory-search` — 本地记忆库混合检索（关键词+语义）。
+## 许可
 
-| 参数 | 必填 | 说明 |
-|------|------|------|
-| `query` | 是 | 自然语言检索意图 |
-| `start_date` | 否 | `YYYY-MM-DD` 业务日期下限（文件名以日期开头的文件） |
-| `end_date` | 否 | `YYYY-MM-DD` 业务日期上限 |
-| `modified_after` | 否 | `YYYY-MM-DD` 或毫秒，文件 mtime 下限 |
-| `modified_before` | 否 | `YYYY-MM-DD` 或毫秒，文件 mtime 上限 |
-| `limit` | 否 | 1–50，默认取 `semanticLimit` |
-| `preview` | 否 | `none`/`short`/`full`，默认取设置 |
-
-返回：`status`（`ready`/`not_ready`/`error`）、`counts`、`results[]`（`path`、`start_line`、`end_line`、`heading`、`scope`、`score`、`matched_by`、`ranks`、`time_basis`、`outlinks`）。
-
-## 注入
-
-- `<zvec-memory-search>`：索引就绪后每会话首次注入检索引导。
-- `<zvec-memory-baseline>`：`baselineFile` 已设且文件可读时注入；内容变化即替换。
-- 超 64KB 截断并在末尾注明截断字节数。
-
-## 隐私
-
-- 只用本地向量模型（`local/qwen3-embedding-0.6b` 等），绝不传 `--allow-remote`、`--api-key`。
-
-## 旧工具
-
-`memory_index_search`、`memory_vec_search` 已删除。改用 `zvec-memory-search`。
+MIT。zvec-grep 本体为 Apache License 2.0，本插件通过其 `zg` 命令行调用，不修改其源码。

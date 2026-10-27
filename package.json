@@ -1,6 +1,6 @@
 {
   "name": "dsh-zvec-memory-search",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "DSH 记忆库混合检索：zvec-memory-search 工具、配置卡冷启动、检索引导与用户补充文件注入",
   "type": "module",
   "license": "MIT",
